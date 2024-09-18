@@ -30,7 +30,7 @@
 en:
   hello: "Hello world"
   sell: 'Sell'
-  sell_on_gem_deposit: 'Sell to Yavar'
+  sell_on_yavar: 'Sell to Yavar'
   create_vendor_account: 'Create a Vendor Account'
   spree:
     company_name: 'Company Name'
