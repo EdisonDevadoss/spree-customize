@@ -1,0 +1,18 @@
+<% if cached_recently_viewed_products.any? %>
+  <div id="recently_viewed" class="mt-4" data-hook>
+    <h3 class="product-section-title"><%= Spree.t(:recently_viewed_products) %></h3>
+    <div class="row gx-5 gy-5" style="align-items: flex-end;">
+      <% cached_recently_viewed_products.each do |product| %>
+        <div class="col-md-3 mt-3"> <!-- Adjust col-md-3 to change the number of columns -->
+          <div class="card" style="min-height: 150px;">
+            <%= link_to product_path(product), class: 'd-block text-center' do %>
+              <%= small_image(product, class: "d-block mx-auto w-100", style: 'height: 100px;') %>
+              <%= content_tag(:span, truncate(product.name, length: 50),  class: 'info mt-3 d-block', title: product.name, style: 'text-overflow: ellipsis; overflow: hidden; display: -webkit-box !important; -webkit-line-clamp: 2; -webkit-box-orient: vertical;') %>
+              <%= content_tag(:span, number_to_currency(product.price, unit: Spree::Config[:currency]), class: 'price d-block mt-2') %>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>

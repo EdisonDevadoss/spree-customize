@@ -1,0 +1,249 @@
+<div class="container mt-5">
+  <!-- Steps navigation -->
+  <%= render partial: 'seller/onboarding/steps' %>
+  <hr class="border border-2 opacity-50">
+
+  <!-- Step contents -->
+  <div class="tab-content" id="pills-tabContent">
+
+    <div class="tab-pane fade show active" id="step2" role="tabpanel" aria-labelledby="step2-tab">
+      <div class="step-content">
+          <div  class="text-center">
+            <h3>Tell us a little bit about yourself</h3>
+            <p>Tell us about you and your shop.</p>
+          </div>
+            <div class="card mb-5">
+              <div class="card-body">
+                <%= form_with model: @shop_info, url: seller_shop_infos_path, method: :post, local: true, remote: true, data: { controller: 'seller-onboarding' } do |form| %>
+                  <div class="row form-group">
+                    <div class="col-sm-2">
+                      <label class="col-form-label">Country of residence <span class="text-success">*</span></label>
+                    </div>              
+                    <div class="col-sm-10">
+                     <%= form.select :country, options_for_select(['Thailand', 'USA', 'Canada', 'UK'], @shop_info.country), {}, class: "form-control", required: true %>
+                    </div>
+                  </div>
+                  <div class="row form-group">
+                    <div class="col-sm-2">
+                      <label class="col-form-label">Taxpayer Type <span class="text-success">*</span></label>
+                    </div>
+                      <div class="col-sm-10" id="taxpayerType-radio">
+                        <div class="form-check form-check-inline ml-1 ml-sm-0">
+                          <%= form.radio_button :tax_payer_type, 'individual', id: 'taxpayer_individual', class: "form-check-input custom-radio", data: { action: "click->seller-onboarding#indivClick", seller_onboarding_target: 'individualBtn' } %>
+                          <label class="form-check-label" for="taxpayer_individual">Individual</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                          <%= form.radio_button :tax_payer_type, 'business', id: 'taxpayer_business', class: "form-check-input custom-radio", data: { action: "click->seller-onboarding#businessClick", seller_onboarding_target: 'businessBtn' } %>
+                          <label class="form-check-label" for="taxpayer_business">Business</label>
+                        </div>
+                      </div>
+                  </div> 
+
+                  <div id="business-fields", data-seller-onboarding-target="businessSec" class="additional-fields">
+                   <%= fields_for :seller_business_info, @shop_info.seller_business_info do |business_form| %>
+                  
+                    <div class="row form-group">
+                        <div class="col-sm-2 mb-2 mb-sm-0">
+                      <label class="col-form-label">Legal business address <span class="text-success">*</span></label>
+                    </div>
+                    <div class="col-sm-10">
+                      <div class="form-group">              
+                        <%= business_form.label :business_type %>
+                        <%= business_form.select :business_type, options_for_select(['Private Limited Partnership', 'Public Limited Partnership', 'Trust'], @shop_info.seller_business_info.business_type), {}, class: "form-control col-md-8"  %>
+                      </div>
+                       <div class="form-group">              
+                        <%= business_form.label :legal_entity %>
+                        <%= business_form.text_field :legal_entity, class: "form-control col-md-8" %>                       
+                      </div>
+                      <div class="form-group">              
+                        <label class="form-label">GSTIN</label>
+                        <%= business_form.text_field :gstin, class: "form-control col-md-8" %>                       
+                      </div>
+                      <div class="form-group">              
+                        <%= business_form.label :country %>
+                        <%= business_form.select :country, options_for_select(['Thailand', 'USA', 'Canada', 'UK'], @shop_info.seller_business_info.country), {}, class: "form-control col-md-8" %>
+                      </div>
+                      <div class="form-group">              
+                        <%= business_form.label :street_address %>
+                        <%= business_form.text_field :street_address, class: "form-control col-md-8" %>                       
+                      </div>
+                      <div class="form-group">
+                        <%= business_form.label :area %>
+                        <%= business_form.text_field :area, class: "form-control col-md-6" %>
+                      </div>
+                      <div class="form-group">
+                        <%= business_form.label :post_code %>
+                        <%= business_form.text_field :pincode, class: "form-control col-md-6" %>
+                      </div>
+                        <div class="form-group">
+                          <%= business_form.label :city %>
+                          <%= business_form.text_field :city, class: "form-control col-md-6" %>
+                        </div>
+                          <div class="form-group">
+                          <%= business_form.label :state %>
+                          <%= business_form.text_field :state, class: "form-control col-md-6" %>
+                        </div>
+                        <div class="form-group">
+                          <%= business_form.label :phone_number %>
+                          <%= business_form.text_field :phone_number, class: "form-control col-md-6" %>
+                        </div>
+                    </div>
+                    <% end %>
+                    </div>
+                  </div>
+
+                  <div class="row form-group">
+                    <div class="col-sm-2 mb-2 mb-sm-0">
+                      <label class="col-form-label">Your name <span class="text-success">*</span></label>
+                    </div>              
+                    <div class="col-sm-10 row">
+                      <div class="form-group col-6">
+                        <%= form.label :first_name %>
+                        <%= form.text_field :first_name, class: "form-control", placeholder: "First name", required: true %>
+                      </div>
+                      <div class="form-group col-6">
+                        <%= form.label :last_name %>
+                        <%= form.text_field :last_name, class: "form-control", placeholder: "Last name", required: true %>
+                      </div>
+                    </div>
+                  </div> 
+
+                  <div class="row form-group">
+                    <div class="col-sm-2">
+                      <label class="col-form-label">Date of Birth <span class="text-success">*</span></label>
+                    </div>
+                    <div class="col-sm-10">
+                      <div class="row">              
+                        <div class="col-md-1 mb-1 mb-md-0">
+                          <%= form.select :birth_day, (1..31).to_a, {selected: @birth_day}, class: 'form-control', required: true %>
+                        </div>
+                        <div class="col-md-3 mb-1 mb-md-0">
+                          <%= form.select :birth_month, Date::MONTHNAMES.compact.each_with_index.map , {selected: @birth_month}, class: 'form-control', required: true %>
+                        </div>
+                        <div class="col-md-3 mb-1 mb-md-0">
+                          <%= form.select :birth_year, (1940..Time.now.year).to_a.reverse, {selected: @birth_year}, class: 'form-control', required: true %>
+                        </div>
+                      </div>
+                    </div>
+                  </div> 
+
+                  <div class="row form-group">
+                    <div class="col-sm-2 mb-2 mb-sm-0">
+                      <label class="col-form-label">Taxpayer Address  <span class="text-success">*</span></label>
+                    </div>
+                    <div class="col-sm-10">
+                      <div class="form-group">              
+                        <%= form.label :street_name %>
+                        <%= form.text_field :street_name, class: "form-control col-md-8",required: true %>                       
+                      </div>
+                      <div class="form-group">
+                        <%= form.label :area %>
+                        <%= form.text_field :area, class: "form-control col-md-6", required: true %>
+                      </div>
+                        <div class="form-group">
+                          <%= form.label :post_code %>
+                          <%= form.text_field :post_code, class: "form-control col-md-6", required: true %>
+                        </div>
+                        <div class="form-group">
+                          <%= form.label :city %>
+                          <%= form.text_field :city, class: "form-control col-md-6", required: true %>
+                        </div>
+                          <div class="form-group">
+                          <%= form.label :state %>
+                          <%= form.text_field :state, class: "form-control col-md-6", required: true %>
+                        </div>
+                        <div class="form-group">
+                          <%= form.label :phone_number %>
+                          <%= form.text_field :phone_number, class: "form-control col-md-6", required: true %>
+                        </div>
+                    </div>
+                  </div> 
+
+               <%= fields_for :shop_bank_detail, @shop_info.shop_bank_detail do |shop_bank_detail_form| %>
+                   <div class="row form-group">
+                    <div class="col-sm-2 mb-2 mb-sm-0">
+                      <label class="col-form-label">Bank Details <span class="text-success">*</span></label>
+                    </div>
+                    <div class="col-sm-10">
+                      <div class="form-group">              
+                        <%= shop_bank_detail_form.label :account_holder_name %>
+                        <%= shop_bank_detail_form.text_field :account_holder_name, class: "form-control",required: true %>
+                      </div>
+                        <div class="form-group">
+                          <%= shop_bank_detail_form.label :bank_name %>
+                          <%= shop_bank_detail_form.text_field :bank_name, class: "form-control", required: true %>
+                        </div>
+                        <div class="form-group">
+                          <%= shop_bank_detail_form.label :sort_code %>
+                          <%= shop_bank_detail_form.text_field :sort_code, class: "form-control", required: true %>
+                        </div>
+
+                        <div class="form-group">
+                          <%= shop_bank_detail_form.label :account_number %>
+                           <div class="input-group">
+                            <%= shop_bank_detail_form.password_field :account_number, value: @shop_info.shop_bank_detail.account_number, class: "form-control", required: true, id: "accountNumber", data: { seller_onboarding_target: 'accountNumber' } %>
+                            <div class="input-group-append">
+                            <button class="btn btn-outline-secondary" type="button" id="togglePassword" data-seller-onboarding-target="accountNumBtn" data-action="seller-onboarding#toogleAccountNum">
+                              <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
+                                <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zm-8 3a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/>
+                                <path d="M8 5a3 3 0 0 0-2.83 4H8a3 3 0 0 0 2.83-4H8z"/>
+                              </svg>
+                              <!-- Eye-slash icon SVG -->
+                              <svg id="eyeSlashIcon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-slash" viewBox="0 0 16 16" style="display: none;">
+                                <path d="M13.359 11.238l.847.847C14.318 12.162 15 10.645 15 8c0-3-3-5.5-7-5.5a6.477 6.477 0 0 0-3.598 1.107l.842.842A5.477 5.477 0 0 1 8 2.5c3 0 6 2.239 6 5.5 0 1.13-.314 2.197-.841 3.07l.2.168z"/>
+                                <path d="M11.704 9.401l.847.847A5.478 5.478 0 0 1 8 12.5c-3 0-6-2.239-6-5.5a5.476 5.476 0 0 1 1.3-3.569l.847.847A4.479 4.479 0 0 0 2.5 8c0 2.485 2.239 4.5 5.5 4.5a4.48 4.48 0 0 0 2.869-1.099l.835.835z"/>
+                                <path d="M3.646 3.646l9 9 .708-.708-9-9-.708.708z"/>
+                              </svg>
+                            </button>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="form-group" id="confirm-account-no">
+                          <%= shop_bank_detail_form.label :confirm_account_number, "Confirm Account Number" %>
+                          <div class="input-group">
+                            <%= shop_bank_detail_form.password_field :confirm_account_number, value: @shop_info.shop_bank_detail.account_number, class: "form-control", required: true, id: "confirmAccountNumber", data: { seller_onboarding_target: 'confirmAccountNumber' } %>
+                            <div class="input-group-append">
+                              <button class="btn btn-outline-secondary" type="button" id="toggleConfirmPassword" data-seller-onboarding-target="confirmAccountNumBtn" data-action="seller-onboarding#toogleConfirmAccountNum">
+                                <!-- Eye icon SVG -->
+                                <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
+                                  <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zm-8 3a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/>
+                                  <path d="M8 5a3 3 0 0 0-2.83 4H8a3 3 0 0 0 2.83-4H8z"/>
+                                </svg>
+                                <!-- Eye-slash icon SVG -->
+                                <svg id="eyeSlashIcon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-slash" viewBox="0 0 16 16" style="display: none;">
+                                  <path d="M13.359 11.238l.847.847C14.318 12.162 15 10.645 15 8c0-3-3-5.5-7-5.5a6.477 6.477 0 0 0-3.598 1.107l.842.842A5.477 5.477 0 0 1 8 2.5c3 0 6 2.239 6 5.5 0 1.13-.314 2.197-.841 3.07l.2.168z"/>
+                                  <path d="M11.704 9.401l.847.847A5.478 5.478 0 0 1 8 12.5c-3 0-6-2.239-6-5.5a5.476 5.476 0 0 1 1.3-3.569l.847.847A4.479 4.479 0 0 0 2.5 8c0 2.485 2.239 4.5 5.5 4.5a4.48 4.48 0 0 0 2.869-1.099l.835.835z"/>
+                                  <path d="M3.646 3.646l9 9 .708-.708-9-9-.708.708z"/>
+                                </svg>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+
+                     </div>  
+                    </div> 
+                <% end %>
+
+                  <div class="form-group text-right">
+                     <%= form.submit 'Save & Continue', class: "btn btn-primary" %>
+                  </div>
+                  <% end %>
+               </div>
+            </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<style>
+  .custom-radio {
+  width: 1em;
+  height: 1em;
+  <%# accent-color: orange; %>
+  transform: scale(1.5);
+  margin-right: 0.5em;
+}
+</style>

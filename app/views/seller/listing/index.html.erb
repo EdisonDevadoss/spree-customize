@@ -1,0 +1,232 @@
+<div class="container">
+  <div class="d-flex justify-content-between align-items-end">
+    <div class="col-10">
+      <h3 class="d-block text-center"> Listings </h3>
+      <div class="search-container mt-4">
+        <%= form_with url: seller_listing_index_path, method: :get, local: true, id: 'filter-form' do %>
+          <div class="form-group d-flex flex-row">
+            <%= text_field_tag :query, params[:query], placeholder: "Search", class: "form-control" %>
+            <button onclick="submitForm(event)" class="btn btn-secondary ml-4 px-4">Search</button>
+          </div>
+        <% end %>
+      </div>
+    </div>
+    <%= button_to new_seller_listing_path, method: :get, class: "btn btn-secondary mb-3" do %>
+      <%= icon(name: 'plus', classes: 'd-inline-block', width: 24, height: 24) %> Add Listings
+    <% end %>
+  </div>
+  <div class="d-flex flex-row justify-content-between">
+    <div class="flex flex-column align-items-center justify-content-center col">
+      <div class="container mt-5">
+        <div class="row">
+          <% @product_details.each do |detail| %>
+            <%= link_to edit_seller_listing_path(detail[:product].id), class: 'card-link' do %>
+              <div class="col-6 col-md-4 col-lg-3">
+                <div class="card mb-4 card-hover">
+                  <% if detail[:image] %>
+                  <%= image_tag main_app.url_for(detail[:image].attachment), class: 'card-img-top product-image', alt: detail[:product].name %>
+                  <% else %>
+                  <%= image_tag 'No_Image_Available.jpg', class: 'card-img-top product-image', alt: 'Default Image' %>
+                  <% end %>
+                  <div class="card-body">
+                    <h5 class="card-title"><%= truncate(detail[:product].name, length: 15) %></h5>
+                    <% if detail[:price] && detail[:price].amount %>
+                    <p class="card-text">Price: <%= detail[:price].amount %> <span class='text-danger font-weight-bold'> <%= detail[:price].currency %></span></p>
+                    <% else %>
+                    <p class="card-text">Price: Not available</p>
+                    <% end %>
+                  <% end %>
+ 
+                  <div class="prev-trash-icons">
+                    <% if detail[:product].status == 'active' %>
+                      <%= link_to spree.product_path(detail[:product]), class: 'icon-link prev-icon-link' do %>
+                        <%= icon(name: 'eye', classes: 'd-inline-block prev-icon', width: 20, height: 20) %>
+                      <% end %>
+                  <%= link_to seller_clone_path(detail[:product].id), class: 'icon-link prev-icon-link' do %>
+                  <%= icon(name: 'clone', classes: 'd-inline-block prev-icon', width: 20, height: 20) %>
+                  <% end %>
+                  <%= link_to seller_listing_path(detail[:product].id), method: :delete, data: { confirm: "Are You Sure?" } do %>
+                  <%= icon(name: 'trash', classes: 'd-inline-block trash-icon', width: 20, height: 20) %>
+                  <% end %>
+                  </div>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+      <%= render 'shared/pagination', model: @products %>
+    </div>
+    <div class="col-4 col-sm-3 col-lg-2 mt-5">
+      <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center">
+        <span class="filter-heading">Filter</span>
+        <button onclick="resetFilters()" class="btn bg-secondary p-2 text-white rounded mt-2 mt-sm-0" style="cursor: pointer;">Reset</button>
+      </div>
+    
+      <h6 class="mt-4">Status</h6>
+      <div class="form-check">
+        <%= radio_button_tag 'status', '', params[:status].blank?, class: 'form-check-input', id: 'status_all', form: 'filter-form', onchange: 'submitForm(event)' %>
+        <%= label_tag 'status_all', 'All', class: 'form-check-label' %>
+      </div>
+      <div class="form-check">
+        <%= radio_button_tag 'status', 'active', params[:status] == 'active', class: 'form-check-input', id: 'status_active', form: 'filter-form', onchange: 'submitForm(event)' %>
+        <%= label_tag 'status_active', 'Active', class: 'form-check-label' %>
+      </div>
+      <div class="form-check">
+        <%= radio_button_tag 'status', 'draft', params[:status] == 'draft', class: 'form-check-input', id: 'status_draft', form: 'filter-form', onchange: 'submitForm(event)' %>
+        <%= label_tag 'status_draft', 'Draft', class: 'form-check-label' %>
+      </div>
+      <div class="form-check">
+        <%= radio_button_tag 'status', 'archived', params[:status] == 'archived', class: 'form-check-input', id: 'status_expired', form: 'filter-form', onchange: 'submitForm(event)' %>
+        <%= label_tag 'status_expired', 'Expired', class: 'form-check-label' %>
+      </div>
+    
+      <h6 class="mt-4">Price</h6>
+      <div class="form-check">
+        <%= radio_button_tag 'price_option', 'all', params[:price_option].blank? || params[:price_option] == 'all', class: 'form-check-input', id: 'price_all', form: 'filter-form', onchange: 'togglePriceFields()' %>
+        <%= label_tag 'price_all', 'All Prices', class: 'form-check-label' %>
+      </div>
+      <div class="form-check">
+        <%= radio_button_tag 'price_option', 'custom', params[:price_option] == 'custom', class: 'form-check-input', id: 'price_custom', form: 'filter-form', onchange: 'togglePriceFields()' %>
+        <%= label_tag 'price_custom', 'Custom Price', class: 'form-check-label' %>
+      </div>
+    
+      <div id="custom_price_fields" style="display: <%= params[:price_option] == 'custom' ? 'flex' : 'none' %>;" class="flex-column mt-2 flex-sm-row">
+        <div class="form-group">
+          <%= label_tag 'min_price', 'Minimum Price', class: 'font-label' %>
+          <%= number_field_tag 'min_price', params[:min_price], class: 'form-control', form: 'filter-form' %>
+        </div>
+        <div class="form-group ml-sm-2">
+          <%= label_tag 'max_price', 'Maximum Price', class: 'font-label' %>
+          <%= number_field_tag 'max_price', params[:max_price], class: 'form-control', form: 'filter-form' %>
+        </div>
+      </div>
+      <button onclick="submitForm(event)" class="btn btn-secondary mt-2 mt-sm-3">Apply</button>
+    </div>
+  </div>
+</div>
+
+<script>
+function submitForm(event) {
+  event.preventDefault();
+
+  const form = document.getElementById('filter-form');
+  const priceOption = document.querySelector('input[name="price_option"]:checked').value;
+  if (priceOption === 'custom') {
+    const min = document.getElementById('min_price').value;
+    const max = document.getElementById('max_price').value;
+
+    if (min !== "" && max !== "") {
+      form.submit();
+    }
+  } else {
+    form.submit();
+  }
+}
+
+
+function resetFilters() {
+  document.getElementById('status_all').checked = true;
+  document.getElementById('price_all').checked = true;
+  document.getElementById('min_price').value = '';
+  document.getElementById('max_price').value = '';
+
+  const baseUrl = new URL(window.location.href);
+  baseUrl.searchParams.delete('status');
+  baseUrl.searchParams.delete('price_option');
+  baseUrl.searchParams.delete('min_price');
+  baseUrl.searchParams.delete('max_price');
+  window.history.replaceState({}, document.title, baseUrl.toString());
+
+  document.getElementById('filter-form').submit();
+}
+
+
+function togglePriceFields() {
+  var customPriceFields = document.getElementById('custom_price_fields');
+  var customPriceRadio = document.getElementById('price_custom');
+  var minPriceField = document.getElementById('min_price');
+  var maxPriceField = document.getElementById('max_price');
+
+  customPriceFields.style.display = customPriceRadio.checked ? 'flex' : 'none';
+  minPriceField.required = customPriceRadio.checked;
+  maxPriceField.required = customPriceRadio.checked;
+}
+
+document.addEventListener('turbo:load', function() {
+  togglePriceFields();
+});
+
+document.addEventListener('turbo:load', function() {
+  const searchField = document.querySelector('input[name="query"]');
+  
+  searchField.addEventListener('input', function(event) {
+    if (this.value.trim() === '') {
+      submitForm(event); // Trigger form submission when the search field is empty
+    }
+  });
+});
+
+
+
+</script>
+
+<style>
+.card {
+  height: 250px; /* Set a fixed height for the card */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative; /* Ensure the card is positioned relative for the absolute positioning of the icon */
+}
+
+.product-image {
+  height: 150px; /* Set a fixed height for the image */
+}
+
+.card-body {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.prev-trash-icons {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.font-label{
+  font-size: 13px;
+}
+
+.filter-heading{
+  font-size: 20px;
+  font-weight: 700
+}
+
+.trash-icon {
+  color: red;
+}
+
+.prev-icon {
+  color: black;
+  width: 22px;
+  height: 22px;
+}
+
+.card-hover:hover .prev-trash-icons {
+  opacity: 1;
+}
+
+.card-link{
+  text-decoration: none !important;
+}
+</style>

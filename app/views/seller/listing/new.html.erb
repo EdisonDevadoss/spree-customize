@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html>
+<!--[if lt IE 7 ]> <html class="ie ie6" lang="<%= I18n.locale %>"> <![endif]-->
+<!--[if IE 7 ]>    <html class="ie ie7" lang="<%= I18n.locale %>"> <![endif]-->
+<!--[if IE 8 ]>    <html class="ie ie8" lang="<%= I18n.locale %>"> <![endif]-->
+<!--[if IE 9 ]>    <html class="ie ie9" lang="<%= I18n.locale %>"> <![endif]-->
+<!--[if gt IE 9]><!--><html lang="<%= I18n.locale %>"><!--<![endif]-->
+  <head data-hook="inside_head">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+  </head>
+
+  <div class="container-fluid">
+      <div class="flex">
+            <%= button_to seller_listing_index_path, method: :get, class:"btn btn-link" do %>
+            <%= icon(name: 'arrow-left',
+              classes: 'd-inline-block',
+              width: 24,
+              height: 24) %>
+              Back to Listings
+          <%end%>
+      </div>
+
+      <div class="flex flex-column align-items-center justify-content-center">
+      <h3 class="d-block text-center"> New Listing </h3>
+     <%= form_with model: @product, url: seller_listing_index_path, method: :post, local: true, html: { multipart: true, data: { controller: "form-toggle" } } do |form| %>
+          <!-- Product Details Card -->
+      <div class="card mb-4">
+        <div class="card-header">
+          About
+        </div>
+        <div class="card-body">
+          <div class="form-group">
+            <label class="col-form-label">Product Name <span class="text-success">*</span></label>
+            <%= form.text_field :name, class: 'form-control', required: true %>
+            <div class="invalid-feedback">
+              Please enter a product name.
+            </div>
+          </div>
+
+          <div class="form-group">
+            <%= form.label :description, "Description" %>
+            <%= form.text_area :description, { rows: 10, class: "form-control spree-rte",  data: { controller: "ckeditor" }} %>
+            <div class="invalid-feedback">
+              Please enter a product description.
+            </div>
+          </div>
+
+          <div class="form-group" data-controller='image-preview'>
+            <%= form.label :images, "Upload Images (Max 10)" %>
+            <%= form.file_field :images, multiple: true, class: 'form-control-file', accept: 'image/*', required: false, 
+              "data-image-preview-target": "imgInput", "data-action": "image-preview#preview" %>
+            <div class="invalid-feedback">
+              Please choose images to upload.
+            </div>
+            <div id="image-preview" class="d-flex flex-wrap"></div>
+          </div>
+
+
+          <div class="form-group" data-controller='video-preview'>
+            <%= form.label :video, "Upload video" %>
+            <%= form.file_field :video,  class: 'form-control-file',  accept: '.mp4', required: false,
+              "data-video-preview-target": "videoInput", "data-action": "video-preview#preview" %>
+            <div class="invalid-feedback">
+              Please choose mp4 to upload.
+            </div>
+            <div id="video-preview"></div>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- Price & Inventory Card -->
+      <div class="card mb-4">
+        <div class="card-header">
+          Price & Inventory
+        </div>
+        <div class="card-body">
+          <div class="form-group">
+            <label class="col-form-label">Price <span class="text-success">*</span></label>
+            <%= form.number_field :price, class: 'form-control', step: 0.001, required: true %>
+            <div class="invalid-feedback">
+              Please enter a valid price.
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="col-form-label">Quantity <span class="text-success">*</span></label>
+            <%= form.number_field :quantity, class: 'form-control', required: true %>
+            <div class="invalid-feedback">
+              Please enter a valid quantity.
+            </div>
+          </div>
+
+          <div class="form-group">
+            <%= form.label :certificate, "Certificate" %>
+            <%= form.file_field :certificate, class: 'form-control-file',  accept: '.pdf,image/*', required: false %>
+            <div class="invalid-feedback">
+              Please choose pdf to upload.
+            </div>
+          </div>
+
+          <div class="form-group">
+            <%= form.label :status do %>
+              <%= form.label :status %>  <span class="text-success">*</span>
+            <% end %>
+            <%= form.select :status, options_for_select([['Active', 'active'], ['Draft', 'draft'], ['Archived', 'archived']]), {}, class: "form-control", required: true %>
+          </div>
+
+          <div class="form-group">
+            <%= form.label :taxon do %>
+              <%= form.label :category %>  <span class="text-success">*</span>
+            <% end %>
+            <%= form.select :taxon, options_for_select(@Taxon.map { |v| [v.permalink, v.id] }), {include_blank: true},
+           class: 'form-control choices', required: true, data: { action: "form-toggle#toggleProperties" }  %>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Product Detail Card -->
+      <div class="card mb-4">
+        <div class="card-header">
+          Product Properties
+        </div>
+        <div class="card-body">
+          <div class="form-group">
+            <label class="col-form-label"> <%= @PrimaryColorLabel.present? ? @PrimaryColorLabel.name : 'Primary Color' %><span class="text-success">*</span></label>
+            <%= form.select(:primary_color, options_for_select(@PrimaryColorPropertyValue.map { |v| [v.name, v.id] }), { include_blank: true }, required: true, class: 'form-control') %>
+          </div>
+          <div class="form-group">
+            <label class="col-form-label"> <%= @SecondaryColorLabel.present? ? @SecondaryColorLabel.name : 'Secondary Color' %></label>
+            <%= form.select(:secondary_color, options_for_select(@SecondaryColorPropertyValue.map { |v| [v.name, v.id] }), { include_blank: true }, class: 'form-control') %>
+          </div>
+
+
+          <div id="jewellery-fields" class="d-none">
+              <div class="form-group">
+                <%= form.label :material, "Material" %>
+                <%= form.select :material, options_for_select(@MaterialPropertyValue.map { |v| [v.name, v.id] }), {include_blank: true}, class: 'form-control choices' %>
+              </div>
+              <div class="form-group">
+                <%= form.label :jewellery_shape, "Jewellery Shape" %>
+                <%= form.select :jewellery_shape, options_for_select(@JewelleryShapePropertyValue.map { |v| [v.name, v.id] }), {include_blank: true}, class: 'form-control choices' %>
+              </div>
+              <div class="form-group">
+                <%= form.label :jewellery_type, "Jewellery Type" %>
+                <%= form.select :jewellery_type, options_for_select(@JewelleryTypePropertyValue.map { |v| [v.name, v.id] }), {include_blank: true}, class: 'form-control choices' %>
+              </div>
+              <div class="form-group">
+                <%= form.label :celebration, "Celebration" %>
+                <%= form.select :celebration, options_for_select(@CelebrationPropertyValue.map { |v| [v.name, v.id] }), {include_blank: true}, class: 'form-control choices' %>
+              </div>
+              <div class="form-group">
+                <%= form.label :recipient, "Recipient" %>
+                <%= form.select :recipient, options_for_select(@RecipientPropertyValue.map { |v| [v.name, v.id] }), {include_blank: true}, class: 'form-control choices' %>
+              </div>
+              <div class="form-group">
+                <%= form.label :theme, "Theme" %>
+                <%= form.select :theme, options_for_select(@ThemePropertyValue.map { |v| [v.name, v.id] }), {include_blank: true}, class: 'form-control choices' %>
+              </div>
+          </div>
+
+          <div id="other-fields" class="d-none">
+            <div class="form-group">
+              <label class="col-form-label"> <%= @GemTypeLabel.present? ? @GemTypeLabel.name : 'Gem Type' %></label>
+              <%= form.select(:gem_type, options_for_select(@GemTypePropertyValue.map { |v| [v.name, v.id] }), { include_blank: true }, class: 'form-control') %>
+            </div>
+            <div class="form-group">
+              <%= form.label :shape do %>
+                Shape <span class="text-success">*</span>
+              <% end %>
+              <%= form.select :shape, options_for_select(@ShapePropertyValue.map { |v| [v.name, v.id] }), { include_blank: true }, class: "form-control choices" %>
+            </div>
+            <div class="form-group">
+              <label class="col-form-label"> <%= @CaratWeightLabel.present? ? @CaratWeightLabel.name : 'Carat Weight' %><span> (Ct)</span><span class="text-success">*</span></label>
+              <%= form.number_field :carat_weight, class: 'form-control', step: 0.001 %>
+              <div class="invalid-feedback">
+                Please enter a valid Carat Weight.
+              </div>
+            </div>
+              
+            <div>
+            <label>Dimension</label>
+              <div class="form-group">
+                <div class="row">
+                  <div class="col-sm-1">
+                    <%= form.number_field :length,placeholder: 'Length', class: 'form-control webkit-inner-spin-button-d-none', step: 0.001 %>
+                  </div>
+                  <div class="col-sm-1">
+                    <%= form.number_field :width,placeholder: 'Width', class: 'form-control webkit-inner-spin-button-d-none', step: 0.001 %>
+                  </div>
+                  <div class="col-sm-1">
+                  <%= form.number_field :height,placeholder: 'Height', class: 'form-control webkit-inner-spin-button-d-none', step: 0.001 %>
+                  </div>
+                  <div class="col-sm-1">
+                  <input class="form-control" type="text" placeholder="mm" readonly>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+            <div data-controller='seller-products-add'>
+              <div class="form-group">
+                <%= form.label :origin, "Origin" %>
+                <%= form.select :origin, options_for_select(@OriginPropertyValue.map { |v| [v.name, v.id] }), 
+                {include_blank: true}, class: 'form-control choices', 
+                "data-action": "seller-products-add#selectOrigin" %>
+              </div>
+
+              <div class="form-group" data-seller-products-add-target="customOrigin">
+                <label class="col-form-label">Custom Origin <span class="text-success">*</span></label>
+                <%= form.text_field :custom_origin, class: 'form-control' %>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <div class="flex text-center mb-6">
+          <button type="submit" class="btn btn-primary">Add Product</button>
+      </div>
+      <% end %>
+      </div>
+  </div>
+
+  <!-- Crop Modal -->
+  <div class="modal fade" id="crop-modal" tabindex="-1" aria-labelledby="crop-modal-label" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="crop-modal-label">Crop Image</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body modal-custom-style">
+          <img id="crop-image" src="" style="max-width: 100%;" />
+          <div class="aspect-ratio-buttons mt-3 ratio-button-container">
+              <button type="button" class="btn btn-outline-primary ratio-button" data-aspect-ratio="1">1:1</button>
+              <button type="button" class="btn btn-outline-primary ratio-button" data-aspect-ratio="16/9">16:9</button>
+              <button type="button" class="btn btn-outline-primary ratio-button" data-aspect-ratio="4/3">4:3</button>
+              <button type="button" class="btn btn-outline-primary ratio-button" data-aspect-ratio="3/2">3:2</button>
+              <button type="button" class="btn btn-outline-primary ratio-button" data-aspect-ratio="5/4">5:4</button>
+              <button type="button" class="btn btn-outline-primary ratio-button" data-aspect-ratio="2/1">2:1</button>
+              <button type="button" class="btn btn-outline-primary ratio-button" data-aspect-ratio="free">freeform</button>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" id="crop-button" class="btn btn-primary">Crop</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  document.addEventListener('turbo:load', () => {
+    const element = document.querySelector('.choices');
+    if (element) {
+      new Choices(element, {
+        searchEnabled: true,
+        removeItemButton: true
+      });
+    }
+  });
+  </script>
+
+  <style>
+  .cke_notification_warning {
+    display: none;
+  }
+
+  .webkit-inner-spin-button-d-none::-webkit-inner-spin-button {
+    display: none
+  }
+
+
+  .img-wrapper {
+    position: relative;
+  }
+
+  .btn-delete {
+      position: absolute;
+      bottom: 8px;
+      right: 7px;
+      color: red;
+      cursor: pointer;
+      font-size: 22px;
+      font-weight: medium;
+      background: white;
+      width: 25px;
+      height: 25px;
+      display:flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 50%;
+    }
+
+    .crop-icon {
+      position: absolute;
+      bottom: 8px;
+      left: 7px;
+      color: black;
+      cursor: pointer;
+      background: white;
+      width: 25px;
+      height: 25px;
+      display:flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 50%;
+    }
+
+    .modal-custom-style{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 30px;
+  }
+
+  .ratio-button-container {
+    width: 300px;
+    display: flex;
+    height: fit-content;
+    flex-wrap: wrap;
+    gap: 25px;
+}
+
+.ratio-button{
+  width: 80px;
+}
+
+  </style>
+</html>

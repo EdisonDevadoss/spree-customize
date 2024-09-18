@@ -1,0 +1,197 @@
+<div class="container">
+  <div class="flex">
+    <%= button_to seller_setting_index_path, method: :get, class: "btn btn-link no-underline" do %>
+      <%= icon(name: 'arrow-left', classes: 'd-inline-block', width: 24, height: 24) %>
+      Back to Settings
+    <% end %>
+  </div>
+  <div class="w-100 mt-4">
+    <%= form_with(model: @shop, url: seller_profile_path(@shop), method: :patch, local: true, html: { enctype: 'multipart/form-data' }) do |form| %>
+      
+      <!-- Banner Section -->
+      <div class="form-group banner-section">
+        <div class="banner-container">
+          <% if @shop.banner.attached? %>
+            <%= image_tag @shop.banner, id: 'banner-image', style: 'width: 100%; height: 300px; object-fit: cover;' %>
+          <% else %>
+            <%= image_tag 'No_Image_Available.jpg', id: 'banner-image', style: 'width: 100%; height: 300px; object-fit: cover;' %>
+          <% end %>
+          <% if @shop.banner.attached? %>
+            <%= form.check_box :remove_banner, { class: 'd-none', id: 'remove-banner-checkbox' }, '1', '0' %>
+            <%= link_to '#', class: 'btn btn-danger btn-sm banner-trash', data: { action: 'remove-banner' } do %>
+              <%= icon(name: 'trash', classes: 'd-inline-block', width: 15, height: 15) %>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Logo Section -->
+      <div class="form-group logo-section">
+        <div class="logo-container">
+          <% if @shop.logo.attached? %>
+            <%= image_tag @shop.logo, id: 'logo-image', class: 'logo-img' %>
+          <% else %>
+            <%= image_tag 'No_Image_Available.jpg', id: 'logo-image', class: 'logo-img' %>
+          <% end %>
+          <% if @shop.logo.attached? %>
+            <%= form.check_box :remove_logo, { class: 'd-none', id: 'remove-logo-checkbox' }, '1', '0' %>
+            <%= link_to '#', class: 'btn btn-danger btn-sm logo-trash', data: { action: 'remove-logo' } do %>
+              <%= icon(name: 'trash', classes: 'd-inline-block', width: 15, height: 15) %>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Rest of the Form -->
+      <div class="form-group">
+        <%= form.label :name do %>
+          <%= form.label :name %> <span class="text-success">*</span>
+        <% end %>
+        <%= form.text_field :name, class: "form-control", placeholder: "Enter your company name", required: true %>
+      </div>
+
+      <div class="form-group">
+        <%= form.label :about_us, 'About Us' %>
+        <%= form.text_area :about_us, class: 'form-control', rows: 4, placeholder: 'Tell us about your shop' %>
+      </div>
+
+      <div class="form-group">
+        <%= form.label :language do %>
+          <%= form.label :language %> <span class="text-success">*</span>
+        <% end %>
+        <%= form.select :language, options_for_select(['Thai', 'English', 'Spanish', 'French'], @shop.language), {}, class: "form-control", required: true %>
+      </div>
+
+      <div class="form-group">
+        <%= form.label :country do %>
+          <%= form.label :country %> <span class="text-success">*</span>
+        <% end %>
+        <%= form.select :country, options_for_select(['Thailand', 'USA', 'Canada', 'UK'], @shop.country), {}, class: "form-control", required: true %>
+      </div>
+
+      <div class="form-group">
+        <%= form.label :currency do %>
+          <%= form.label :currency %> <span class="text-success">*</span>
+        <% end %>
+        <%= form.select :currency, options_for_select(['THB', 'USD', 'CAD', 'GBP'], @shop.currency), {}, class: "form-control", required: true %>
+      </div>
+
+      <div class="form-group">
+        <%= form.label :banner, 'Upload New Banner' %>
+        <%= form.file_field :banner, class: 'form-control', accept: 'image/*', required: false %>
+      </div>
+
+      <div class="form-group">
+        <%= form.label :logo, 'Upload New Logo' %>
+        <%= form.file_field :logo, class: 'form-control', accept: 'image/*', required: false %>
+      </div>
+
+      <div class="form-group text-right">
+        <%= form.submit 'Save Changes', class: "btn btn-primary" %>
+      </div>
+    <% end %>
+  </div>          
+</div>
+
+<style>
+.banner-section, .logo-section {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.no-underline {
+  text-decoration: none;
+}
+
+.no-underline:hover {
+  text-decoration: none;
+}
+
+.banner-container, .logo-container {
+  position: relative;
+}
+
+.banner-trash {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  color: white;
+  background-color: rgba(255, 0, 0, 0.5);
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.banner-trash:hover {
+  opacity: 0.8;
+}
+
+.logo-container {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 2px solid black;
+  padding: 5px;
+  background-color: white;
+}
+
+.logo-img {
+  height: 100px;
+  width: 100px;
+  object-fit: cover;
+}
+
+.logo-trash {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  color: white;
+  background-color: rgba(255, 0, 0, 0.5);
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.logo-trash:hover {
+  opacity: 0.8;
+}
+
+.banner-trash.hidden, .logo-trash.hidden {
+  display: none;
+}
+</style>
+
+<script>
+document.addEventListener('turbo:load', () => {
+  const handleImageRemoval = (selector, checkboxId, imageId, defaultImage) => {
+    document.querySelectorAll(selector).forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const checkbox = document.getElementById(checkboxId);
+        const image = document.getElementById(imageId);
+        
+        if (checkbox && image) {
+          checkbox.checked = true;
+          image.src = defaultImage;
+          link.classList.add('hidden');
+        }
+      });
+    });
+  };
+
+  handleImageRemoval('[data-action="remove-banner"]', 'remove-banner-checkbox', 'banner-image', '/assets/No_Image_Available-09b826475e6d835d7007b52f4814d3076fa985f2982073d0d70358569df0cf82.jpg');
+  handleImageRemoval('[data-action="remove-logo"]', 'remove-logo-checkbox', 'logo-image', '/assets/No_Image_Available-09b826475e6d835d7007b52f4814d3076fa985f2982073d0d70358569df0cf82.jpg');
+});
+
+</script>

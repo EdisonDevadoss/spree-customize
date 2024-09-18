@@ -1,0 +1,119 @@
+<div class="container">
+  <div>
+      <%= button_to 'javascript:history.back()', method: :get, class: "btn btn-link no-underline" do %>
+        <%= icon(name: 'arrow-left', classes: 'd-inline-block', width: 24, height: 24) %>
+        Back
+      <% end %>
+  </div>
+  <div class="mt-4">
+    </div>
+    <div class="h3 mt-6 text-center font-weight-bold">
+    SETTINGS
+    </div>
+    <div class="row justify-content-center mt-5">
+      <div class="col-md-2 mb-4">
+          <%= link_to spree.edit_user_path(try_spree_current_user) do %>
+            <div class="card justify-content-between p-4" style='height:200px;'>
+              <div> 
+                  <span class="h6 font-weight-bold">ACCOUNT</span>
+              </div>
+              <div class="mt-2 d-flex justify-content-end">
+                  <%= icon(name: 'card-text',
+                          classes: 'd-inline-block mr-2',
+                          width: 34,
+                          height: 34) %>
+              </div>        
+            </div>
+          <% end %>
+      </div>
+      <div class="col-md-2 mb-4">
+        <% if @shipping_method.present? %>
+            <%= link_to edit_seller_shipping_configuration_path(try_spree_current_user) do %>
+              <div class="card justify-content-between p-4" style='height:200px;'>
+                <div> 
+                    <span class="h6 font-weight-bold">SHIPPING CONFIGURATION</span>
+                </div>
+                <div class="mt-2 d-flex justify-content-end">
+                    <%= icon(name: 'gear',
+                            classes: 'd-inline-block mr-2',
+                            width: 34,
+                            height: 34) %> 
+                </div>
+              </div>
+            <% end %>
+        <% else %>
+        <%= link_to new_seller_shipping_configuration_path do %>
+            <div class="card justify-content-between p-4" style='height:200px;'>
+                <div> 
+                    <span class="h6 font-weight-bold">SHIPPING CONFIGURATION</span>
+                </div>
+                <div class="mt-2 d-flex justify-content-end">
+                    <%= icon(name: 'gear',
+                            classes: 'd-inline-block mr-2',
+                            width: 34,
+                            height: 34) %> 
+                </div>
+              </div>
+            <% end %>
+        <% end %>
+      </div>
+        <div class="col-md-2 mb-4">
+          <%= link_to new_seller_stock_location_path do %>
+            <div class="card justify-content-between p-4" style='height:200px;'>
+              <div> 
+                  <span class="h6 font-weight-bold">STOCK LOCATION</span>
+              </div>
+              <div class="mt-2 d-flex justify-content-end">
+                  <%= icon(name: 'person',
+                          classes: 'd-inline-block mr-2',
+                          width: 34,
+                          height: 34) %>
+              </div>
+            </div>
+          <% end %>
+      </div>
+      <div class="col-md-2 mb-4">
+          <%= link_to edit_seller_profile_path(try_spree_current_user) do %>
+            <div class="card justify-content-between p-4" style='height:200px;'>
+              <div> 
+                  <span class="h6 font-weight-bold">PROFILE</span>
+              </div>
+              <div class="mt-2 d-flex justify-content-end">
+                  <%= icon(name: 'person',
+                          classes: 'd-inline-block mr-2',
+                          width: 34,
+                          height: 34) %>
+              </div>
+            </div>
+          <% end %>
+      </div>
+      <div class="col-md-2 mb-4">
+          <%= link_to seller_billing_info_index_path do %>
+            <div class="card justify-content-between p-4" style='height:200px;'>
+              <div> 
+                  <span class="h6 font-weight-bold">Billing Info</span>
+              </div>
+              <div class="mt-2 d-flex justify-content-end">
+                  <%= icon(name: 'receipt',
+                          classes: 'd-inline-block mr-2',
+                          width: 34,
+                          height: 34) %>
+              </div>
+            </div>
+          <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<style>
+.no-underline {
+  text-decoration: none;
+}
+
+.no-underline:hover {
+  text-decoration: none;
+}
+
+</style>

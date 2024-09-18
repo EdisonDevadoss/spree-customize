@@ -1,0 +1,8 @@
+<%= javascript_include_tag("add_recently_viewed_products.js") %>
+<div id="recently_viewed_container" data-hook></div>
+<script>
+  
+  document.addEventListener("turbo:load", function(e){
+    fetch_recently_viewed_products('<%= @product.try(:id) %>');
+  })
+</script>

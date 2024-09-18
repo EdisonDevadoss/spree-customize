@@ -1,0 +1,110 @@
+<div class="container mt-5">
+  <!-- Steps navigation -->
+  <%= render partial: 'seller/onboarding/steps' %>
+  <hr class="border border-2 opacity-50">
+
+  <!-- Step contents -->
+  <div class="tab-content" id="pills-tabContent">
+
+    <div class="tab-pane fade show active" id="step3" role="tabpanel" aria-labelledby="step3-tab">
+      <div class="step-content">
+        <div  class="text-center">
+            <h3>Setup Billing</h3>
+            <p>Let's us know you'd like to pay your Yavar bill.</p>
+        </div>
+
+        <div class="card mb-5">
+          <div class="card-body">
+            <h5 class="card-title">Add a credit card</h5>
+
+          <%= form_with(model: @shop_billing_info, url: seller_shop_billing_infos_path, method: :post, local: true) do |form| %>    
+            <div class="row form-group">
+              <div class="col-sm-2">
+                <label class="col-form-label">Card Number <span class="text-success">*</span></label>
+              </div>              
+              <div class="col-sm-10">
+                <%= form.number_field :card_number, class: "form-control", required: true %>
+              </div>
+            </div> 
+
+            <div class="row form-group">
+              <div class="col-sm-2">
+                <label class="col-form-label">Expiration Date <span class="text-success">*</span></label>
+              </div>              
+              <div class="col-sm-10 row">
+                  <div class="form-group col-6">
+                    <%= form.select :exp_month, Date::MONTHNAMES.compact.each_with_index.map , {}, class: 'form-control', required: true %>
+                  </div>
+                  <div class="form-group col-6">
+                    <%= form.select :exp_year, (Time.now.year..Time.now.year+5).to_a, {}, class: 'form-control', required: true %>
+                  </div>
+              </div>
+            </div>
+
+            <div class="row form-group">
+              <div class="col-sm-2">
+                <label class="col-form-label">CCV <span class="text-success">*</span></label>
+              </div>              
+              <div class="col-sm-10">
+                <%= form.text_field :ccv, class: "form-control", required: true, maxlength: 4  %>
+              </div>
+            </div> 
+
+            <div class="row form-group">
+              <div class="col-sm-2">
+                <label class="col-form-label">Name on Card <span class="text-success">*</span></label>
+              </div>              
+              <div class="col-sm-10">
+                <%= form.text_field :name_on_card, class: "form-control", required: true %>
+              </div>
+            </div> 
+
+              <%= fields_for :shop_billing_address, @shop_billing_info.shop_billing_address do |shop_billing_address_form| %>
+                   <div class="row form-group">
+                    <div class="col-sm-2 mb-2 mb-sm-0">
+                      <label class="col-form-label">Billing Address <span class="text-success">*</span></label>
+                    </div>
+                    <div class="col-sm-10">
+
+                   <div class="form-group">
+                      <%= shop_billing_address_form.label :country %>
+                     <%= shop_billing_address_form.select :country, options_for_select(['Thailand', 'USA', 'Canada', 'UK'], @shop.country), {}, class: "form-control", required: true %>
+                  </div> 
+
+                   
+                        <div class="form-group">
+                          <%= shop_billing_address_form.label :street_name %>
+                          <%= shop_billing_address_form.text_field :street_name, class: "form-control", required: true %>
+                        </div>
+                        <div class="form-group">
+                          <%= shop_billing_address_form.label :area %>
+                          <%= shop_billing_address_form.text_field :area, class: "form-control", required: true %>
+                        </div>
+                        <div class="form-group">
+                          <%= shop_billing_address_form.label :zip_code %>
+                          <%= shop_billing_address_form.text_field :zip_code, class: "form-control", required: true %>
+                        </div>
+                        <div class="form-group">
+                          <%= shop_billing_address_form.label :city %>
+                          <%= shop_billing_address_form.text_field :city, class: "form-control", required: true %>
+                        </div>
+                            <div class="form-group">
+                          <%= shop_billing_address_form.label :state %>
+                          <%= shop_billing_address_form.text_field :state, class: "form-control", required: true %>
+                        </div>
+
+                     </div>  
+                    </div> 
+                <% end %>
+
+            <div class="form-group text-right">
+              <%= form.submit 'Save & Continue', class: "btn btn-primary" %>
+            </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

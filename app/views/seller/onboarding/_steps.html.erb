@@ -1,0 +1,43 @@
+ <ul class="nav nav-pills nav-fill mb-5 flex-nowrap" id="pills-tab" role="tablist">
+    <li class="nav-item" role="presentation">
+      <%= link_to seller_navigate_onboarding_path(step: 1), class: "nav-link p-2 px-sm-3 py-sm-2 #{'active' if @navigate_step == 1} #{'disabled' if @step < 1}" do %>
+         <div class="step-number">1</div>
+        <div class="step-text">Shop preferences</div>
+      <%end%>
+    </li>
+    <li class="nav-item" role="presentation">
+      <%= link_to seller_navigate_onboarding_path(step: 2), class: "nav-link p-2 px-sm-3 py-sm-2 #{'active' if @navigate_step == 2} #{'disabled' if @step < 2}" do %>
+        <div class="step-number">2</div>
+        <div class="step-text">How you'll get paid</div>
+      <% end %>
+    </li>
+    <li class="nav-item" role="presentation">
+      <%= link_to seller_navigate_onboarding_path(step: 3), class: "nav-link p-2 px-sm-3 py-sm-2 #{'active' if @navigate_step == 3} #{'disabled' if @step < 3}" do %>
+        <div class="step-number">3</div>
+        <div class="step-text">Share your billing info</div>
+      <%end%>
+    </li>
+  </ul>
+
+<style>
+.nav-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.nav-link .step-number {
+  font-weight: bold;
+}
+
+.nav-link.active {
+  background-color: #3236a8 !important;
+  color: white !important;
+}
+
+@media screen and (max-width: 300px) {
+ .step-text{
+   display: none;
+ }  
+}
+</style>

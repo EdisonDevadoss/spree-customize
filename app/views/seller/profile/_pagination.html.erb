@@ -1,0 +1,73 @@
+<% if @products.total_pages > 1 %>
+  <div class="pagination-container">
+    <%= paginate @products, theme: "twitter-bootstrap-4" %>
+  </div>
+<% end %>
+
+
+<style>
+.pagination-container {
+  display: flex;
+  justify-content: center; /* Center the pagination */
+  margin-top: 20px; /* Space above the pagination */
+}
+
+.pagination {
+  display: flex;
+  list-style: none; /* Remove default list styling */
+  padding: 0;
+  margin: 0;
+}
+
+.pagination li {
+  margin: 0 2px; /* Space between pagination items */
+}
+
+.pagination li a, .pagination li span {
+  display: block;
+  padding: 0.5rem 0.75rem; /* Padding inside pagination items */
+  border: 1px solid #dee2e6; /* Border around pagination items */
+  border-radius: 0.25rem; /* Rounded corners */
+  text-decoration: none; /* Remove underline from links */
+  color: #007bff; /* Text color */
+  background-color: #fff; /* Background color for links */
+  text-align: center; /* Center text inside pagination items */
+}
+
+.pagination li a {
+  color: #000; /* Link color */
+}
+
+.pagination li span {
+  color: #6c757d; /* Color for static text like "Previous" and "Next" */
+}
+
+.pagination .active span {
+  color: #fff; /* Text color for active page */
+  background-color: #000; /* Background color for active page */
+  border-color: #000; /* Border color for active page */
+}
+
+.pagination .disabled span {
+  color: #6c757d; /* Text color for disabled state */
+  background-color: #fff; /* Background color for disabled state */
+  border-color: #dee2e6; /* Border color for disabled state */
+  pointer-events: none; /* Disable click events for disabled state */
+}
+
+.pagination .prev a, .pagination .next a {
+  color: #000; /* Color for Previous and Next links */
+}
+
+.pagination .prev.disabled span, .pagination .next.disabled span {
+  color: #6c757d; /* Text color for disabled Previous and Next */
+  border-color: #dee2e6; /* Border color for disabled Previous and Next */
+  pointer-events: none; /* Disable click events for disabled Previous and Next */
+}
+
+.pagination .prev a:hover, .pagination .next a:hover {
+  text-decoration: underline; /* Underline on hover */
+}
+
+
+</style>

@@ -1,0 +1,102 @@
+<div class="container mt-4">
+  <% if @shop.banner.attached? %>
+    <div class="mb-4" style="height: 300px; overflow: hidden;">
+      <%= image_tag @shop.banner, class: 'img-fluid w-100 h-100 object-fit-cover' %>
+    </div>
+  <% end %>
+
+  <div class="row mb-6">
+    <% if @shop.logo.attached? %>
+      <div class="col-md-2 mb-3 mb-md-0 text-center">
+        <%= image_tag @shop.logo, class: 'img-fluid rounded-circle', style: "height: 120px; width: 120px;" %>
+      </div>
+    <% end %>
+
+    <div class="col-md-10">
+      <h1 class="h3"><%= @shop.name %></h1>
+      <% if @shop.about_us.present? %>
+        <p><%= @shop.about_us %></p>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="my-4">
+    <h1 class="h4 mb-4">Additional Details</h1>
+    <div class="d-flex flex-row">
+      <% if @shop.language.present? %>
+        <p class="mr-4"><strong>Language:</strong> <%= @shop.language %></p>
+      <% end %>
+      <% if @shop.country.present? %>
+        <p class="mx-4"><strong>Country:</strong> <%= @shop.country %></p>
+      <% end %>
+      <% if @shop.currency.present? %>
+        <p class="ml-4"><strong>Currency:</strong> <%= @shop.currency %></p>
+      <% end %>
+    </div>
+  </div>
+
+  <div data-controller='search-products'>
+    <h1 class="h4 mb-4">Products</h1>
+    <div class="search-container mt-4">
+      <%= form_with url: seller_profile_path, local: true, remote: true, id: 'searchForm', data: {action: "submit->search-products#handleSubmit", search_products_target: "searchForm"} do %>
+        <div class="form-group d-flex flex-row justify-content-end">
+          <%= text_field_tag :query, params[:query], placeholder: "Search", class: "form-control", style: 'max-width: 400px', id: "searchField", data: { search_products_target: "searchField" } %>
+          <button type="submit" class="btn btn-secondary ml-4 px-4" data-search-products-target="searchButton">Search</button>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Products List Container -->
+    <div id="products-list" class="row gx-5 gy-5" style="align-items: flex-end;" data-search-products-target="productsList">
+      <% @product_details.each do |detail| %>
+          <div class="col-6 col-md-4 col-lg-3">
+            <%= link_to spree.product_path(detail[:product]) do %>
+              <div class="card mb-4 card-hover">
+                <% if detail[:image] %>
+                <%= image_tag main_app.url_for(detail[:image].attachment), class: 'card-img-top product-image', alt: detail[:product].name %>
+                <% else %>
+                <%= image_tag 'No_Image_Available.jpg', class: 'card-img-top product-image', alt: 'Default Image' %>
+                <% end %>
+                <div class="card-body">
+                  <h5 class="card-title"><%= truncate(detail[:product].name, length: 15) %></h5>
+                  <% if detail[:price] && detail[:price].amount %>
+                  <p class="card-text">Price: <%= detail[:price].amount %> <span class='text-danger font-weight-bold'> <%= detail[:price].currency %></span></p>
+                  <% else %>
+                  <p class="card-text">Price: Not available</p>
+                  <% end %>
+                </div>
+              </div>
+            <% end %>
+          </div>
+      <% end %>
+    </div>
+    <%= render 'pagination' %>
+  </div>
+</div>
+
+
+<style>
+.card {
+  height: 300px; /* Set a fixed height for the card */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative; /* Ensure the card is positioned relative for the absolute positioning of the icon */
+}
+
+.product-image {
+  height: 200px; /* Set a fixed height for the image */
+  object-fit: fill; /* Ensures the image covers the entire area */
+}
+
+.card-body {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.card-hover:hover .prev-trash-icons {
+  opacity: 1;
+}
+</style>

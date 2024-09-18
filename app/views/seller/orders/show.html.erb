@@ -1,0 +1,127 @@
+<div class="container mt-5">
+  <h1 class="mb-4">Order Details</h1>
+  <% item_total = 0 %>
+  <div class="row mb-4">
+    <div class="col-md-6">
+      <div class="card">
+        <% @shop_line_items.each do |item| %>
+          <% item_total += item.price.to_i %>
+        <%end%>
+        <div class="card-header">
+          Order Information
+        </div>
+        <div class="card-body">
+          <p><strong>Order Number:</strong> <%= @order.number %></p>
+          <p><strong>Order Status:</strong> <%= @order.state %></p>
+          <p><strong>Order Date:</strong> <%= @order.completed_at || @order.created_at %></p>
+          <p><strong>Item Total:</strong> <%= item_total %> <%= @order.currency %></p>
+          <p><strong>Shipment Total:</strong> <%= @order.shipment_total %> <%= @order.currency %></p>
+          <p><strong>Total Amount:</strong> <%= @order.shipment_total + item_total %> <%= @order.currency %></p>
+          <p><strong>Payment State:</strong> <%= @order.payment_state %></p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 mt-4 mt-md-0">
+      <div class="card">
+        <div class="card-header">
+          Customer Information
+        </div>
+        <div class="card-body">
+          <p><strong>Customer Email:</strong> <%= @order.email %></p>
+          <p><strong>Billing Address:</strong> <%= full_address(@order.bill_address) %></p>
+          <p><strong>Shipping Address:</strong> <%= full_address(@order.ship_address) %></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h2 class="mb-4">Items</h2>
+  <div class="table-responsive mb-4">
+    <table class="table table-striped table-bordered">
+      <thead class="thead-dark">
+        <tr>
+          <th class="align-middle">Product</th>
+          <th class="align-middle">Quantity</th>
+          <th class="align-middle">Price</th>
+          <th class="align-middle">Total</th>
+          <th class="align-middle">Shipment State</th>
+          <th class="align-middle">Status</th>
+          <th class="align-middle">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @shop_line_items.each do |line_item| %>
+          <tr>
+            <td class="align-middle"><%= line_item.variant.name %></td>
+            <td class="align-middle"><%= line_item.quantity %></td>
+            <td class="align-middle"><%= line_item.price %> <%= @order.currency %></td>
+            <td class="align-middle"><%= line_item.price * line_item.quantity %> <%= @order.currency %></td>
+            <td class="align-middle">
+              <% if line_item.approved? %>
+                <%= form_with url: update_line_item_seller_order_path(@order, line_item), method: :patch, local: true, class:"d-flex align-items-end" do |form| %>
+                  <%= form.hidden_field :line_item_id, value: line_item.id %>
+                  <%= form.hidden_field :id, value: line_item.id %>
+                  <%= form.select :shipment_state, options_for_select([
+                    ['Select State', ''],
+                    ['Pending', 'pending'],
+                    ['Getting Packed', 'getting_packed'],
+                    ['Shipped', 'shipped'],
+                    ['Out for Delivery', 'out_for_delivery'],
+                    ['Delivered', 'delivered'],
+                  ], line_item.shipment_state), {}, class: 'form-control select-state-dropdown' %>
+                  <%= form.submit 'Update', class: 'btn btn-primary mt-2 ml-2' %>
+                <% end %>
+              <% else %>
+                <p class="mb-0">NA</p>
+              <% end %>
+            </td>
+            <td class="align-middle">
+              <% if line_item.canceled? %>
+                <span class="badge badge-danger">Canceled</span>
+              <% elsif line_item.approved? %>
+                <span class="badge badge-success">Approved</span>
+              <% else %>
+                <span class="badge badge-secondary">Pending</span>
+              <% end %>
+            </td>
+            <td class="align-middle">
+              <% unless line_item.approved? || line_item.canceled? %>
+                <div class="d-flex">
+                  <%= button_to 'Approve', approve_line_item_seller_order_path(@order, line_item), method: :patch, class: 'btn btn-success btn-sm' %>
+                  <%= button_to 'Cancel', cancel_line_item_seller_order_path(@order, line_item), method: :patch, class: 'btn btn-danger btn-sm ml-2' %>
+                </div>
+              <% else %>
+                <span>NA</span>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+<style>
+.table-responsive {
+  overflow-x: auto;
+}
+
+.table td, .table th {
+  vertical-align: middle; /* Ensures content is centered vertically */
+  text-align: center;     /* Center content horizontally if desired */
+}
+
+.select-state-dropdown{
+    min-width: 166px !important;
+}
+
+@media (max-width: 768px) {
+  .table td, .table th {
+    font-size: 0.9rem; /* Adjusts font size for smaller screens */
+  }
+}
+
+
+
+</style>

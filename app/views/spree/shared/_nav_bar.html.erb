@@ -1,0 +1,61 @@
+<ul id="nav-bar" class="nav align-items-center d-flex flex-nowrap justify-content-end navbar-right" data-turbo-permanent data-turbo-permanent>
+  <li>
+    <div class="navbar-right-search-menu">
+      <button type="button" class="navbar-right-dropdown-toggle search-icons" aria-label="<%= Spree.t('nav_bar.show_search') %>">
+        <%= icon(name: 'magnifying-glass',
+                 classes: 'd-inline-block',
+                 width: 24,
+                 height: 24) %>
+      </button>
+
+      <div id="search-dropdown" class="p-0 px-md-4 py-md-2 w-100 shadow navbar-right-search-menu-dropdown hide-on-esc">
+        <%= render partial: 'spree/shared/search' %>
+      </div>
+    </div>
+  </li>
+  <% if defined?(spree.account_link_path) %>
+      <% if spree_current_user && authenticate_spree_seller %>
+        <li>
+            <div class="navbar-right-search-menu">
+                <%= link_to seller_dashboard_index_path, class: 'navbar-right-dropdown-toggle search-icons', aria: { label: Spree.t('nav_bar.show_search') } do %>
+                    <%= icon(name: 'store-solid',
+                            classes: 'd-inline-block',
+                            width: 24,
+                            height: 24) %>
+                <% end %>
+            </div>
+        </li>
+   <% end %> 
+    <li>
+      <div class="dropdown navbar-right-dropdown">
+        <button id="account-button" type="button" data-toggle="dropdown" class="navbar-right-dropdown-toggle account-icon" aria-label="<%= Spree.t('nav_bar.show_user_menu') %>">
+          <%= icon(name: 'person',
+                  classes: 'd-inline-block',
+                  width: 24,
+                  height: 24) %>
+        </button>
+        <div id="link-to-seller-account" class="dropdown-menu dropdown-menu-right text-right">
+          <% if try_spree_current_user %>
+            <%= link_to Spree.t(:my_account).upcase, spree.account_path, class: 'dropdown-item' if spree.respond_to?(:account_path) %>
+            <% if authenticate_spree_seller %>
+              <%= link_to seller_setting_index_path, class: "dropdown-item" do %>
+                SETTINGS
+              <% end %>
+            <% end %>
+            <% if spree.respond_to?(:admin_orders_path) %>
+              <%= link_to Spree.t('nav_bar.admin_panel'), spree.admin_orders_path(locale: nil), class: 'dropdown-item text-uppercase' if try_spree_current_user.has_spree_role?(:admin) %>
+            <% end %>
+            <%= link_to Spree.t(:logout).upcase, spree_logout_path, class: 'dropdown-item', method: :get if defined?(spree_logout_path) %>
+          <% else %>
+            <%= link_to Spree.t(:login).upcase, spree_login_path, class: 'dropdown-item' if defined?(spree_login_path) %>
+            <%= link_to Spree.t(:sign_up).upcase, spree_signup_path, class: 'dropdown-item' if defined?(spree_signup_path) %>
+          <% end %>
+        </div>
+      </div>
+    </li>
+  <% end %>
+  <li id="link-to-cart">
+    <%= render 'spree/shared/cart', class: 'd-inline-block cart-icon', size: 24, item_count: 0 %>
+  </li>
+  <%= render partial: 'spree/shared/internationalization_options' %>
+</ul>

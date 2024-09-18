@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<!--[if lt IE 7 ]> <html class="ie ie6" lang="<%= I18n.locale %>"> <![endif]-->
+<!--[if IE 7 ]>    <html class="ie ie7" lang="<%= I18n.locale %>"> <![endif]-->
+<!--[if IE 8 ]>    <html class="ie ie8" lang="<%= I18n.locale %>"> <![endif]-->
+<!--[if IE 9 ]>    <html class="ie ie9" lang="<%= I18n.locale %>"> <![endif]-->
+<!--[if gt IE 9]><!--><html lang="<%= I18n.locale %>"><!--<![endif]-->
+  <head data-hook="inside_head">
+    <%= javascript_importmap_tags %>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+    
+      <%= render partial: 'spree/shared/head' %>
+  </head>
+
+   <body class="<%= body_class %>" id="<%= @body_id || 'default' %>" data-hook="body">
+    <div id="overlay" class="overlay hide-on-esc"></div>
+    <div id="spree-header">
+    <header id="header" class="d-flex align-items-center header-spree border-bottom">
+      <div class="container-fluid h-100 header-spree-fluid">
+        <div class="d-flex flex-nowrap align-items-center h-100 px-2">
+          <div class="flex-grow-1 header-spree-fluid-mobile-menu-toggler">
+            <figure class="logo flex-grow-0 flex-xl-grow-1 order-xl-0 header-spree-fluid-logo m-0">
+            <%= logo %>
+          </figure>
+          </div>
+      </div>
+    </header>
+  </div>
+    <%= flash_messages %>     
+    <%= yield %>
+  </body>
+</html>

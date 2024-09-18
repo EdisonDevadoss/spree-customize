@@ -1,0 +1,2 @@
+class GemType < ApplicationRecord
+end

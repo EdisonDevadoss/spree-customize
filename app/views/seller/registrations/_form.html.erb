@@ -1,0 +1,22 @@
+  <%= form_with model: seller, url: seller_registrations_path,  data: {controller: 'seller-registration', action: "submit->seller-registration#submit", turbo: false }, local: true, remote: true do |f| %>
+          
+            <div class="form-group">
+              <%= f.label :email %>
+              <%= f.email_field :email, class: 'form-control' %>
+            </div>
+            <div class="form-group">
+              <%= f.label :password %>
+              <%= f.password_field :password, class: 'form-control' %>
+            </div>
+            <div class="form-group">
+              <%= f.label :password_confirmation %>
+              <%= f.password_field :password_confirmation, class: 'form-control' %>
+            </div>
+            <div class="text-right">
+             <p class="h6">
+            If you already have a seller account,
+              <%= link_to Spree.t(:login), spree_login_path, class: 'btn btn-link p-0' if defined?(spree_login_path) %>
+            </p>
+            </div>
+             <%= f.submit 'Submit', class: 'btn btn-primary btn-block spree-btn mt-2', data: { seller_registration_target: "button" } %>
+<% end %>

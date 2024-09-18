@@ -1,0 +1,133 @@
+<div class="container" data-controller="zones">
+  <div class="flex">
+    <%= button_to seller_setting_index_path, method: :get, class: "btn btn-link" do %>
+      <%= icon(name: 'arrow-left', classes: 'd-inline-block', width: 24, height: 24) %>
+      Back to Settings
+    <% end %>
+  </div>
+
+  <%= form_with model: @shipping_method, url: seller_shipping_configuration_index_path, method: :post, local: true do |form| %>
+    <div class="row">
+      <div class="col-12 col-lg-10">
+        <%= form.field_container :name do %>
+          <%= form.label :name, "Name" %>
+          <%= form.text_field :name, class: 'form-control' %>
+          <%= form.error_message_on :name %>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-12 col-lg-10">
+        <%= form.field_container :code do %>
+          <%= form.label :code, "Code" %>
+          <%= form.text_field :code, class: 'form-control', placeholder: "code" %>
+          <%= form.error_message_on :code %>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-12 col-lg-10">
+        <div id="calculator_fields" data-hook class="card mb-3">
+          <div class="card-header">
+            <h5 class="card-title mb-0 h6">
+              <%= Spree.t(:calculator) %>
+            </h5>
+          </div>
+          <div id="preference-settings" data-hook class="card-body">
+            <div class="form-group">
+              <%= form.label(:calculator_type, Spree.t(:calculator), for: 'calc_type') %>
+              <%= form.select(:calculator_type, @calculators.map { |c| [c.description, c.name] }, {}, { id: 'calc_type', class: 'form-control' }) %>
+            </div>
+
+            <% if !@shipping_method.new_record? %>
+              <div class="form-group">
+                <div class="calculator-settings">
+                  <%= form.fields_for :calculator, @shipping_method.calculator do |calculator_form| %>
+                    <div class="form-group">              
+                      <%= calculator_form.label :preferred_amount, "Amount" %>
+                      <%= calculator_form.text_field :preferred_amount, class: "form-control col-md-8" %>                       
+                    </div>
+                    <div class="form-group">              
+                      <%= calculator_form.label :preferred_currency, "Currency" %>
+                      <%= calculator_form.text_field :preferred_currency, class: "form-control col-md-8", disabled: true %>                     
+                    </div>
+                  <% end %>
+                </div>
+
+                <% if @shipping_method.calculator.respond_to?(:preferences) %>
+                  <span class="calculator-settings-warning info warning">
+                    <%= Spree.t(:calculator_settings_warning) %>
+                  </span>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-12 col-lg-10">
+        <div id="calculator_fields" data-hook class="card mb-3">
+          <div class="card-header">
+            <h5 class="card-title mb-0 h6">
+              Zones
+            </h5>
+          </div>
+          <div class="mb-0 h6 card-body">
+            <%= form.field_container :zone_ids do %>
+              <!-- All Checkbox -->
+              <div class="form-check mb-3">
+                <%= check_box_tag 'select_all_zones', 'all', false, class: 'form-check-input', id: 'select_all_zones', data: { zones_target: 'selectAll', action: 'zones#toggleAll' } %>
+                <%= label_tag 'select_all_zones', 'All', class: 'form-check-label' %>
+              </div>
+
+              <!-- Zone Checkboxes -->
+              <% @zones.each do |zone| %>
+                <div class="form-check">
+                  <%= form.check_box :zone_ids, { multiple: true, class: 'form-check-input zone-checkbox', data: { zones_target: 'zoneCheckbox', action: 'zones#updateSelectAll' } }, zone.id, nil %>
+                  <%= form.label :zone_ids, zone.name, class: 'form-check-label' %>
+
+                  <% if zone.zone_members.any? %>
+                    <div class="zone-members mt-2">
+                      <% zone.zone_members.each do |member| %>
+                        <% if member.zoneable_type == "Spree::Country" || member.zoneable_type == "Spree::State" %>
+                          <span class="badge bg-info text-dark">
+                            <%= member.zoneable.name %>
+                            <% if member.zoneable.respond_to?(:country) %>
+                              (<%= member.zoneable.country.name %>)
+                            <% end %>
+                          </span>
+                        <% end %>
+                      <% end %>
+                    </div>
+                  <% end %>
+                </div>
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row mt-4 text-center">
+      <div class="col-12">
+        <%= form.submit @shipping_method.new_record? ? "Add Shipping" : "Update Shipping", class: "btn btn-primary" %>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<style>
+  .zone-members .badge {
+    margin: 2px;
+    color: #17a2b8;
+    border-color: #17a2b8;
+  }
+
+  .zone-members {
+    margin-left: 1.5rem;
+  }
+</style>

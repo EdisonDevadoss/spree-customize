@@ -1,0 +1,17 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  account_holder_name: MyString
+  bank_name: MyString
+  sort_code: MyString
+  acccount_number: MyString
+  user: one
+  shop_info: one
+
+two:
+  account_holder_name: MyString
+  bank_name: MyString
+  sort_code: MyString
+  acccount_number: MyString
+  user: two
+  shop_info: two

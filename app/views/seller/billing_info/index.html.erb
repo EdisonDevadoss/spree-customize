@@ -1,0 +1,114 @@
+<div class="container">
+  <div class="flex">
+    <%= button_to seller_setting_index_path, method: :get, class: "btn btn-link" do %>
+      <%= icon(name: 'arrow-left', classes: 'd-inline-block', width: 24, height: 24) %>
+      Back to Settings
+    <% end %>
+  </div>
+  <div class="w-100 mt-4">
+    <ul class="tabs">
+      <li class="tab-item" data-target="#payment-info">How you'll get paid</li>
+      <li class="tab-item" data-target="#billing-info">Share your billing info</li>
+    </ul>
+    <div class="tab-content">
+      <div class="tab-pane" id="payment-info"> 
+        <%= render 'get_paid', shop_info:@shop_info %> 
+      </div>
+
+      <div class="tab-pane" id="billing-info">
+        <%= render 'share_billing_info', shop_billing_info:@shop_billing_info %> 
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+/* Reset default styles */
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Tab container styles */
+.tabs {
+  display: flex;
+  padding: 0;
+  margin: 0;
+  border-bottom: 1px solid #ddd;
+}
+
+/* Tab item styles */
+.tab-item {
+  padding: 10px 20px;
+  cursor: pointer;
+  margin-right: 4px;
+  border: 1px solid #ddd;
+  border-radius: 4px 4px 0 0;
+  background-color: #f8f8f8;
+}
+
+.tab-item.active {
+  background-color: #fff;
+  border-bottom: 1px solid #fff;
+  color: #000;
+  font-weight: bold;
+}
+
+/* Tab content styles */
+.tab-content {
+  border: 1px solid #ddd;
+  padding: 20px;
+  border-top: none;
+}
+
+/* Tab pane styles */
+.tab-pane {
+  display: none; 
+}
+
+.tab-pane.active {
+  display: block;
+}
+
+.tab-pane h5 {
+  margin-top: 0;
+}
+
+.tab-pane p {
+  margin-bottom: 0;
+}
+</style>
+
+<script>
+document.addEventListener('turbo:load', function() {
+  const tabItems = document.querySelectorAll('.tab-item');
+  const tabPanes = document.querySelectorAll('.tab-pane');
+
+  function activateTab(targetId) {
+    tabItems.forEach(item => {
+      const target = item.getAttribute('data-target').slice(1); // Remove the '#' from the id
+      item.classList.toggle('active', target === targetId);
+    });
+    tabPanes.forEach(pane => {
+      pane.classList.toggle('active', pane.id === targetId);
+    });
+  }
+
+  function getTabFromQuery() {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('tab') || 'payment-info'; // Default to 'payment-info' if no query parameter
+  }
+
+  const initialTab = getTabFromQuery();
+  activateTab(initialTab);
+
+  tabItems.forEach(item => {
+    item.addEventListener('click', function() {
+      const targetId = item.getAttribute('data-target').slice(1); // Remove the '#' from the id
+      activateTab(targetId);
+      history.replaceState(null, '', `?tab=${targetId}`); // Update URL without reloading
+    });
+  });
+});
+</script>

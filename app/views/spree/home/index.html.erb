@@ -1,0 +1,43 @@
+<% if @homepage %>
+    <% @homepage.cms_sections.each do |section| %>
+      <%= build_section(section) %>
+    <% end %>
+<% else %>
+  <div id="missingHomepage" class="container my-5">
+    <div class="row my-5">
+      <div class="col-12">
+        <figure class="logo mx-auto missing-homepage-logo-container">
+          <%= logo %>
+        </figure>
+      </div>
+      <div class="col-12 mb-5 text-center">
+        <h1 class="mb-3"><%= Spree.t('we_will_be_back') %></h1>
+        <h4 class="text-dark"><%= Spree.t('we_are_busy_updating', store_name: current_store.name) %></h4>
+        <h4 class="text-dark"><%= Spree.t('please_check_back_soon') %></h4>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<% if cached_recently_viewed_products.any? %>
+  <div id="recently_viewed" class="mt-4 mb-4" data-hook>
+    <h3 class="product-section-title"><%= Spree.t(:recently_viewed_products) %></h3>
+    <div class="row">
+      <% cached_recently_viewed_products.each do |product| %>
+        <div class="col-md-2 m-2"> <!-- Adjust col-md-3 to change the number of columns -->
+          <div class="card p-2" style="min-height: 150px;">
+            <%= link_to product_path(product), class: 'd-block text-center' do %>
+              <%= small_image(product, class: "d-block mx-auto") %>
+              <%= content_tag(:span, truncate(product.name, length: 50), class: 'info mt-3 d-block', title: product.name, style: 'text-overflow: ellipsis; overflow: hidden; display: -webkit-box !important; -webkit-line-clamp: 2; -webkit-box-orient: vertical;') %>
+              <%= content_tag(:span, number_to_currency(product.price, unit: Spree::Config[:currency]), class: 'price d-block mt-2 text-danger font-weight-bold') %>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>
+
+
+
+<%= render "spree/shared/cms/pages/edit_mode", edit_mode: @edit_mode %>

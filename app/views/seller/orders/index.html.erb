@@ -1,0 +1,47 @@
+<div class="p-4">
+  <!-- Search Form -->
+<%= form_with url: seller_orders_path, method: :get, local: true, class: "mb-4" do |form| %>
+    <div class="input-group">
+      <%= form.text_field :query, value: params[:query], placeholder: "Search Order Number", class: "form-control" %>
+      <div class="input-group-append">
+        <%= form.submit "Search", class: "btn btn-primary" %>
+      </div>
+    </div>
+<% end %>
+
+<h1>Your Orders</h1>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th class="col w-auto">Order Number</th>
+      <th class="col w-auto">Date</th>
+      <th class="col w-auto">Order Status</th>
+      <th class="col w-auto">Payment State</th>
+      <th class="col w-auto">Total</th>
+      <th class="col w-auto">Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% total = 0 %>
+    <% @orders.each do |order| %>
+      <% total = 0 %>
+      <tr>
+        <% order.line_items.select { |li| li.shop_id == @shop.id }.each do |item| %>
+          <% total += item.price.to_i %>
+        <%end%>
+        <th scope="row"><%= order.number %></th>
+        <td><%= order.completed_at %></td>
+        <td><%= order.state %></td>
+        <td><%= order.payment_state %></td>
+        <td><%= total %> <%= order.currency %> </td>
+        <td><%= link_to 'View', seller_order_path(order) %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%= render 'shared/pagination', model: @orders %>
+
+</div>
+

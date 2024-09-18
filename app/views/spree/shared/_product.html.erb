@@ -1,0 +1,21 @@
+<% url = spree.product_path(product, taxon_id: @taxon&.id) %>
+<%= link_to url, class: 'h-100 d-flex flex-column' do %>
+  <% cache [common_product_cache_keys, product] do %>
+    <%= plp_and_carousel_image(product, image_class) %>
+    <div class="mt-2">
+      <div class="product-component-name" title="<%= product.name %>">
+        <%= product.name %>
+      </div>
+      <div class="product-component-price"><%= display_price(product) %></div>
+
+      <% carat_weight_label = Spree::Property.find_by(name: "CaratWeight") %>
+      <% carat_weight_property_value = product.product_properties.find_by(property_id: carat_weight_label&.id) %>
+
+      <% if carat_weight_property_value %>
+        <div class="mt-2">
+          <strong>Carat Weight:</strong> <%= carat_weight_property_value.value %> Ct
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+<% end %>

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<!--[if lt IE 7 ]> <html class="ie ie6" lang="<%= I18n.locale %>"> <![endif]-->
+<!--[if IE 7 ]>    <html class="ie ie7" lang="<%= I18n.locale %>"> <![endif]-->
+<!--[if IE 8 ]>    <html class="ie ie8" lang="<%= I18n.locale %>"> <![endif]-->
+<!--[if IE 9 ]>    <html class="ie ie9" lang="<%= I18n.locale %>"> <![endif]-->
+<!--[if gt IE 9]><!--><html lang="<%= I18n.locale %>"><!--<![endif]-->
+  <head data-hook="inside_head">
+    <%= javascript_importmap_tags %>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+    <%= render partial: 'spree/shared/head' %>
+  </head>
+
+  <body class="<%= body_class %>" id="<%= @body_id || 'default' %>" data-hook="body">
+    <div id="overlay" class="overlay hide-on-esc"></div>
+    <div id="spree-header">
+      <header id="header" class="d-flex align-items-center header-spree border-bottom">
+        <div class="container-fluid h-100">
+          <div class="d-flex flex-row justify-content-between align-items-center h-100 px-2">
+            <% if request.path != '/seller/setting' && !request.path.include?('seller/profile') && !request.path.include?('seller/shipping_configuration') && !request.path.include?('seller/billing_info') %>
+              <span id="sidebar-toggle" class="d-xl-none">
+                <%= icon(name: 'ham-icon', classes: 'd-inline-block', width: 24, height: 24) %>
+              </span>
+              <span id="sidebar-close" class="d-xl-none" style="display: none;">
+                <%= icon(name: 'close-icon', classes: 'd-inline-block', width: 24, height: 24) %>
+              </span>
+            <% end %>
+            <figure class="logo flex-grow-0 flex-xl-grow-1 order-xl-0 header-spree-fluid-logo m-0">
+              <%= logo %>
+            </figure>
+            <ul class="nav align-items-center d-flex flex-nowrap justify-content-end navbar-right">
+              <li>
+                <div class="navbar-right-search-menu">
+                  <%= link_to spree.root_path, class: 'navbar-right-dropdown-toggle search-icons', aria: { label: Spree.t('nav_bar.show_search') } do %>
+                    <%= icon(name: 'home-icon', classes: 'd-inline-block', width: 24, height: 24) %>
+                  <% end %>
+                </div>
+              </li>
+              <li>
+                <div class="dropdown navbar-right-dropdown">
+                  <button id="account-button" type="button" data-toggle="dropdown" class="navbar-right-dropdown-toggle account-icon" aria-label="User Menu">
+                    <%= icon(name: 'person', classes: 'd-inline-block', width: 24, height: 24) %>
+                  </button>
+                  <div id="link-to-seller-account" class="dropdown-menu dropdown-menu-right text-right">
+                    <%= link_to spree.account_path, class: "dropdown-item" do %>
+                      My ACCOUNT
+                    <% end %>
+                    <%= link_to seller_setting_index_path, class: "dropdown-item" do %>
+                      SETTINGS
+                    <% end %>
+                    <%= link_to Spree.t(:logout).upcase, spree_logout_path, class: 'dropdown-item', method: :get if defined?(spree_logout_path) %>
+                  </div>
+                </div>            
+              </li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      
+      <div class="container-fluid">
+        <div class="row flex-nowrap">
+          <% if request.path != '/seller/setting' && !request.path.include?('seller/profile') && !request.path.include?('seller/shipping_configuration') && !request.path.include?('seller/billing_info') && !request.path.include?('seller/stock_location') %>
+            <div id="sidebar" class="col-sm-3 col-xl-2 px-0 bg-white border-right">
+              <div class="flex flex-column align-items-center align-items-sm-start pt-2 text-white min-height-100-header">
+                <ul class="nav flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
+                  <li class="nav-item w-100 p-2">
+                    <%= link_to seller_dashboard_index_path, class: "nav-link #{active_class(seller_dashboard_index_path)} align-middle px-sm-2 align-items-center justify-content-start", style: "gap: 10px" do %>
+                      <%= icon(name: 'dashboard', classes: 'd-inline-block', width: 24, height: 24) %>
+                      <span class="ms-1 d-inline pt-10">Dashboard</span>
+                    <% end %>
+                  </li>
+                  <li class="nav-item w-100 p-2">
+                    <%= link_to seller_listing_index_path, class: "nav-link align-middle px-sm-2 justify-content-start #{active_class(seller_listing_index_path)} #{active_class(seller_listing_index_path)}", style: "gap: 10px" do %>
+                      <%= icon(name: 'list-prod', classes: 'd-inline-block', width: 24, height: 24) %>
+                      <span class="ms-1 d-inline pt-10">Listing</span>
+                    <% end %>
+                  </li>
+
+                  <li class="nav-item w-100 p-2">
+                    <%= link_to seller_orders_path, class: "nav-link align-middle px-sm-2 justify-content-start #{active_class(seller_orders_path)} #{active_class(seller_orders_path)}", style: "gap: 10px" do %>
+                      <%= icon(name: 'cart-check', classes: 'd-inline-block', width: 24, height: 24) %>
+                      <span class="ms-1 d-inline pt-10">Orders</span>
+                    <% end %>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          <% end %>
+          
+          <div class="col col-height">
+            <% if request.path != '/seller/setting' && !request.path.include?('seller/profile') && !request.path.include?('seller/shipping_configuration') && !request.path.include?('seller/billing_info') %>
+        
+            <% end %>
+            <div class="py-3" style="overflow: hidden;">
+              <%= flash_messages %>     
+              <%= yield %>
+            </div>
+          </div>
+        </div>
+      </div>    
+    </div>
+ 
+    <style>
+      .nav-link {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+      }
+
+      .nav-link.active {
+        background-color: #dee2e6 !important;
+      }
+
+      .col-height {
+        overflow: auto;
+        height: calc(100vh - 51px); /* Ensure it takes full height */
+      }
+
+      .min-height-100-header{
+        height: calc(100vh - 51px);
+      }
+
+      @media (max-width: 1199.98px) {
+        .logo {
+          text-align: center;
+          flex-grow: 1;
+        }
+
+        #sidebar {
+          position: absolute;
+          top: 50px;
+          left: 0;
+          height: calc(100% - 51px);
+          width: 90%;
+          z-index: 1; /* Ensure it overlays the main content */
+          transform: translateX(-100%);
+          transition: transform 0.3s ease-in-out;
+        }
+
+        #sidebar.show {
+          transform: translateX(0);
+        }
+      }
+    </style>
+
+    <script src="https://cdn.ckeditor.com/4.17.1/standard/ckeditor.js"></script>
+
+    <script>
+      document.getElementById('sidebar-toggle').addEventListener('click', function() {
+        document.getElementById('sidebar').classList.add('show');
+        document.getElementById('sidebar-toggle').style.display = 'none';
+        document.getElementById('sidebar-close').style.display = 'block';
+      });
+
+      document.getElementById('sidebar-close').addEventListener('click', function() {
+        document.getElementById('sidebar').classList.remove('show');
+        document.getElementById('sidebar-toggle').style.display = 'block';
+        document.getElementById('sidebar-close').style.display = 'none';
+      });
+    </script>
+  </body>
+</html>
